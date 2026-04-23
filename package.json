@@ -1,6 +1,6 @@
 {
   "name": "obsidian-plugin-say",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "",
   "main": "main.js",
   "type": "module",
@@ -16,6 +16,7 @@
   "keywords": [],
   "author": "",
   "license": "MIT",
+  "packageManager": "pnpm@10.33.2",
   "devDependencies": {
     "@eslint/js": "^9.30.1",
     "@types/node": "^22.0.0",
