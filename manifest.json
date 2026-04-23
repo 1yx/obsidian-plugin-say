@@ -4,6 +4,6 @@
   "version": "0.1.0",
   "minAppVersion": "0.13.0",
   "description": "A lightweight plugin that reads aloud the H1 heading of a target note when you hover over an internal link, using the system's built-in TTS (e.g. macOS `say`).",
-  "author": "dontaire",
+  "author": "1yx",
   "isDesktopOnly": true
 }
