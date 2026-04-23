@@ -4,3 +4,4 @@ dist
 coverage
 CLAUDE.md
 openspec
+.claude/

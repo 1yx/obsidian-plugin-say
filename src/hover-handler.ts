@@ -45,6 +45,10 @@ export class HoverHandler {
   private onHover(ctx: HoverLinkEvent): void {
     this.cancel();
 
+    if (ctx.source !== "editor" && ctx.source !== "preview") {
+      return;
+    }
+
     const settings = this.getSettings();
     if (!settings.enabled) {
       return;
