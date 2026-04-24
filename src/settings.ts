@@ -22,7 +22,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   enabled: true,
   ttsCommand: DEFAULT_TTS_COMMAND[platform],
   speechRate: 1,
-  triggerDelay: 0,
+  triggerDelay: 300,
   voice: "",
   ttsArgs: "",
 };
@@ -135,7 +135,7 @@ export class SettingTab extends PluginSettingTab {
       )
       .addSlider((slider) =>
         slider
-          .setLimits(100, 1000, 50)
+          .setLimits(0, 1000, 50)
           .setValue(this.plugin.settings.triggerDelay)
           .setDynamicTooltip()
           .onChange(async (value) => {

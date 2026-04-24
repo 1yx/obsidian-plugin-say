@@ -16,6 +16,10 @@ export class HoverHandler {
   private ref: EventRef | undefined;
   private debounceTimer: ReturnType<typeof setTimeout> | undefined;
   private currentProcess: ReturnType<typeof speak> | undefined;
+  private targetEl: HTMLElement | undefined;
+  private readonly onMouseLeave = () => {
+    this.cancel();
+  };
 
   constructor(app: App, getSettings: () => PluginSettings) {
     this.app = app;
@@ -37,6 +41,7 @@ export class HoverHandler {
   /** Cancel any pending speech and unregister the event. */
   destroy(): void {
     this.cancel();
+    this.detachMouseLeave();
     if (this.ref) {
       this.app.workspace.offref(this.ref);
     }
@@ -44,6 +49,7 @@ export class HoverHandler {
 
   private onHover(ctx: HoverLinkEvent): void {
     this.cancel();
+    this.detachMouseLeave();
 
     if (ctx.source !== "editor" && ctx.source !== "preview") {
       return;
@@ -53,6 +59,9 @@ export class HoverHandler {
     if (!settings.enabled) {
       return;
     }
+
+    this.targetEl = ctx.targetEl;
+    this.targetEl.addEventListener("mouseleave", this.onMouseLeave);
 
     this.debounceTimer = setTimeout(() => {
       this.speakLink(ctx.linktext);
@@ -67,6 +76,13 @@ export class HoverHandler {
     if (this.currentProcess) {
       this.currentProcess.kill();
       this.currentProcess = undefined;
+    }
+  }
+
+  private detachMouseLeave(): void {
+    if (this.targetEl) {
+      this.targetEl.removeEventListener("mouseleave", this.onMouseLeave);
+      this.targetEl = undefined;
     }
   }
 
