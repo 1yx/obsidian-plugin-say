@@ -8,6 +8,9 @@ export type SpeakOptions = {
   voice: string;
 };
 
+const REJECT_CHARS = /[\0\r\n\t]/;
+const REJECT_COMMAND = /[|&;$`\\]/;
+
 type SpawnSpec = {
   command: string;
   args: string[];
@@ -99,8 +102,15 @@ function splitArgs(input: string): string[] {
 
 /** Speak the given text using the system TTS engine. */
 export function speak(opts: SpeakOptions): ChildProcess {
+  if (REJECT_CHARS.test(opts.text)) {
+    throw new Error("Text contains disallowed control characters");
+  }
+  if (REJECT_COMMAND.test(opts.ttsCommand)) {
+    throw new Error("TTS command contains disallowed shell metacharacters");
+  }
+
   const spec = buildSpawnArgs(opts);
-  const child = spawn(spec.command, spec.args);
+  const child = spawn(spec.command, spec.args, { stdio: "ignore" });
   child.on("error", () => {
     // Silently ignore TTS errors — non-critical UX feature
   });

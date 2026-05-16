@@ -113,12 +113,16 @@ export class HoverHandler {
     }
 
     const settings = this.getSettings();
-    this.currentProcess = speak({
-      ttsCommand: settings.ttsCommand,
-      ttsArgs: settings.ttsArgs,
-      text,
-      rate: settings.speechRate,
-      voice: settings.voice,
-    });
+    try {
+      this.currentProcess = speak({
+        ttsCommand: settings.ttsCommand,
+        ttsArgs: settings.ttsArgs,
+        text,
+        rate: settings.speechRate,
+        voice: settings.voice,
+      });
+    } catch {
+      // Input validation rejected the text or command — skip silently
+    }
   }
 }
