@@ -92,6 +92,8 @@ export default tseslint.config(
       },
       globals: {
         ...globals.browser,
+        activeWindow: "readonly",
+        Buffer: "readonly",
       },
     },
 
