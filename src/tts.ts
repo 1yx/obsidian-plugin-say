@@ -43,7 +43,6 @@ const ENGINES: Record<string, EngineBuilder> = {
       ? `$synth.SelectVoice('${escapePowerShell(opts.voice)}'); `
       : "";
     const script = `Add-Type -AssemblyName System.Speech; $synth = New-Object System.Speech.Synthesis.SpeechSynthesizer; ${voicePart}$synth.Rate = ${rateWin}; $synth.Speak('${escapePowerShell(opts.text)}')`;
-    // eslint-disable-next-line no-undef
     const encoded = Buffer.from(script, "utf16le").toString("base64");
     return { command: "powershell", args: ["-EncodedCommand", encoded] };
   },

@@ -1,4 +1,9 @@
-import { type App, type EventRef, type CachedMetadata } from "obsidian";
+import {
+  type App,
+  type EventRef,
+  type CachedMetadata,
+  type Workspace,
+} from "obsidian";
 import { speak } from "./tts";
 import type { PluginSettings } from "./settings";
 
@@ -10,11 +15,15 @@ type HoverLinkEvent = {
   linktext: string;
 };
 
+type WorkspaceExt = Workspace & {
+  on(name: "hover-link", callback: (ctx: HoverLinkEvent) => void): EventRef;
+};
+
 export class HoverHandler {
   private app: App;
   private getSettings: () => PluginSettings;
   private ref: EventRef | undefined;
-  private debounceTimer: ReturnType<typeof setTimeout> | undefined;
+  private debounceTimer: number | undefined;
   private currentProcess: ReturnType<typeof speak> | undefined;
   private targetEl: HTMLElement | undefined;
   private readonly onMouseLeave = () => {
@@ -28,9 +37,7 @@ export class HoverHandler {
 
   /** Register the hover-link event listener. */
   register(): void {
-    // hover-link is an undocumented workspace event; cast to bypass typed API
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    this.ref = (this.app.workspace as any).on(
+    this.ref = (this.app.workspace as WorkspaceExt).on(
       "hover-link",
       (ctx: HoverLinkEvent) => {
         this.onHover(ctx);
@@ -63,14 +70,14 @@ export class HoverHandler {
     this.targetEl = ctx.targetEl;
     this.targetEl.addEventListener("mouseleave", this.onMouseLeave);
 
-    this.debounceTimer = setTimeout(() => {
+    this.debounceTimer = activeWindow.setTimeout(() => {
       this.speakLink(ctx.linktext);
     }, settings.triggerDelay);
   }
 
   private cancel(): void {
     if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer);
+      activeWindow.clearTimeout(this.debounceTimer);
       this.debounceTimer = undefined;
     }
     if (this.currentProcess) {
